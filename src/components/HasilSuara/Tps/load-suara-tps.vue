@@ -132,7 +132,7 @@ export default {
       this.tps = null;
       let query = {
         uid_wilayah: e,
-        limit: 150,
+        limit: 290,
         offset: 0,
       };
       this.getDataTps(query);
