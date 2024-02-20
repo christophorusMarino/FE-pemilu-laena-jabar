@@ -20,7 +20,12 @@
                 :jenis="currentTabDprdKota"
               />
             </v-tab-item>
-            <v-tab-item value="KECAMATAN_DPRD_KOTA"> </v-tab-item>
+            <v-tab-item value="KECAMATAN_DPRD_KOTA">
+              <tabulasi-kecamatan-dprd-kota
+                :layer="layer"
+                :jenis="currentTabDprdKota"
+              />
+            </v-tab-item>
           </v-tabs-items>
         </v-container>
       </v-sheet>
@@ -29,9 +34,10 @@
 </template>
         
   <script>
+import TabulasiKecamatanDprdKota from "./tabulasi-kecamatan-dprd-kota.vue";
 import TabulasiTpsDprdKota from "./tabulasi-tps-dprd-kota.vue";
 export default {
-  components: { TabulasiTpsDprdKota },
+  components: { TabulasiTpsDprdKota, TabulasiKecamatanDprdKota },
   props: ["layer"],
 
   data: () => ({

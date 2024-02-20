@@ -60,6 +60,22 @@ export default {
                         reject(error)
                     })
             })
+        },
+        getHasilKecPerDapil(_, dapil) {
+            let role = JSON.parse(localStorage.getItem("xrfgthj")).role;
+            return new Promise((resolve, reject) => {
+                axios.get(`tps/datadapil/${dapil}`, {
+                    headers: {
+                        "role": role
+                    },
+                })
+                    .then((response) => {
+                        resolve(response.data)
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            })
         }
     }
 }

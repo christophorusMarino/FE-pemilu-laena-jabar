@@ -2,29 +2,41 @@
   <div class="ma-5">
     <v-row no-gutters>
       <v-col cols="4"></v-col>
-      <v-col cols="3">
+      <v-col cols="2">
+        <v-autocomplete
+          label="pilih kabupaten"
+          v-model="kabupaten"
+          :items="listKota"
+          item-text="nama"
+          item-value="nama"
+          outlined
+          dense
+          @change="getDapil"
+        ></v-autocomplete>
+      </v-col>
+      <v-col cols="2">
         <v-autocomplete
           v-model="dapil"
           label="pilih dapil"
           dense
           outlined
-          :items="listDapilDprRiTps"
+          :items="listDapilDprdKotaKec"
           item-text="nama"
           item-value="nama"
-          @change="tabulasiDprRiTps"
+          @change="tabulasiDprdKotaKec"
         ></v-autocomplete>
       </v-col>
       <v-col cols="1">
         <v-card-title class="py-0 justify-center" v-if="dapil">
-          <v-icon x-large @click="() => tabulasiDprRiTps()">
+          <v-icon x-large @click="tabulasiDprdKotaKec">
             mdi-refresh-circle
           </v-icon>
         </v-card-title>
       </v-col>
-      <v-col cols="4"></v-col>
+      <v-col cols="3"></v-col>
     </v-row>
     <v-row no-gutters v-if="!loading">
-      <v-col cols="12" v-for="(data, idx) in dataHasilDprRiTps" :key="idx">
+      <v-col cols="12" v-for="(data, idx) in dataHasilDprdKotaKec" :key="idx">
         <v-card class="ma-2">
           <v-row no-gutters>
             <v-col cols="12">
@@ -36,7 +48,7 @@
               <v-card-title
                 class="py-0 justify-center font-weight-bold black--text text-subtitle-1"
               >
-                - {{ data.jenis }} / {{ data.nama }} -
+                - {{ data.jenis }} || {{ data.nama }} -
               </v-card-title>
               <v-card-title
                 class="py-0 justify-center font-weight-bold black--text text-caption"
@@ -46,11 +58,12 @@
               <v-card-title
                 class="py-0 justify-center font-weight-bold black--text text-caption"
               >
-                Suara Masuk : {{ fromTpsDprRi.tps_input_suara }} /
-                {{ fromTpsDprRi.jumlah_tps }} TPS (
+                Suara Masuk : {{ fromKecDprdKota.tps_input_suara }} /
+                {{ fromKecDprdKota.jumlah_tps }} TPS (
                 {{
                   (
-                    (fromTpsDprRi.tps_input_suara / fromTpsDprRi.jumlah_tps) *
+                    (fromKecDprdKota.tps_input_suara /
+                      fromKecDprdKota.jumlah_tps) *
                     100
                   ).toFixed(2)
                 }}% )
@@ -69,7 +82,7 @@
                 <v-card-text class="ma-0 px-2">
                   <Bar
                     :chart-options="chartOptions"
-                    :data="resultPartaiDprRiTps[idx].result"
+                    :data="resultPartaiDprdKotaKec[idx].result"
                     :chart-id="chartId"
                     :dataset-id-key="datasetIdKey"
                     :width="width"
@@ -79,14 +92,14 @@
               </v-col>
               <v-col cols="6">
                 <v-card-title
-                  class="py-0 justify-center font-weight-bold black--text text-subtitle-2"
+                  class="py-0 justify-center font-weight-bold white--text text-subtitle-2"
                 >
                   - PEROLEHAN SUARA CALEG -
                 </v-card-title>
                 <v-card-text class="ma-0 px-2">
                   <Bar
                     :chart-options="chartOptions"
-                    :data="resultCalegDprRiTps[idx].result"
+                    :data="resultCalegDprdKotaKec[idx].result"
                     :chart-id="chartId"
                     :dataset-id-key="datasetIdKey"
                     :width="width"
@@ -96,7 +109,7 @@
               </v-col>
               <v-col cols="12">
                 <v-card-title
-                  class="py-0 justify-center font-weight-bold black--text text-subtitle-2"
+                  class="py-0 justify-center font-weight-bold white--text text-subtitle-2"
                 >
                   - PEROLEHAN KURSI PARPOL -
                 </v-card-title>
@@ -104,18 +117,19 @@
                   <v-row no-gutters>
                     <v-col
                       cols="2"
-                      v-for="(val, key, index) in dataHasilDprRiTps[idx].kursi"
+                      v-for="(val, key, index) in dataHasilDprdKotaKec[idx]
+                        .kursi"
                       :key="index"
                     >
-                      <v-card color="yellow" outlined class="ma-1">
+                      <v-card color="green" outlined class="ma-1">
                         <v-card-title
-                          class="justify-center black--text font-weight-bold black--text text-subtitle-2"
+                          class="justify-center white--text font-weight-bold black--text text-subtitle-2"
                         >
                           {{ key.toUpperCase() }}
                         </v-card-title>
                         <v-divider></v-divider>
                         <v-card-title
-                          class="justify-center black--text font-weight-bold black--text text-caption"
+                          class="justify-center white--text font-weight-bold black--text text-caption"
                         >
                           Kursi: {{ val }}
                         </v-card-title>
@@ -129,14 +143,15 @@
         </v-card>
       </v-col>
     </v-row>
+
     <v-row no-gutters v-else>
       <v-col cols="6">
-        <v-card color="yellow lighten-4" class="ma-2">
+        <v-card color="green lighten-4" class="ma-2">
           <v-skeleton-loader type="image"></v-skeleton-loader>
         </v-card>
       </v-col>
       <v-col cols="6">
-        <v-card color="yellow lighten-4" class="ma-2">
+        <v-card color="green lighten-4" class="ma-2">
           <v-skeleton-loader type="image"></v-skeleton-loader>
         </v-card>
       </v-col>
@@ -146,9 +161,9 @@
     </v-snackbar>
   </div>
 </template>
-    
-<script>
-import { mapActions } from "vuex";
+      
+      <script>
+import { mapActions, mapGetters } from "vuex";
 import { Bar } from "vue-chartjs";
 import {
   Chart as ChartJS,
@@ -194,14 +209,15 @@ export default {
   },
 
   data: () => ({
+    kabupaten: null,
     dapil: null,
     loading: false,
     alertSnackbar: false,
     textSnackbar: "",
     colorSnackbar: "",
-    listDapilDprRiTps: [],
-    dataHasilDprRiTps: [],
-    dataHasilCalegDprRiTps: [],
+    listDapilDprdKotaKec: [],
+    dataHasilDprdKotaKec: [],
+    dataHasilCalegDprdKotaKec: [],
     chartOptions: {
       responsive: true,
       maintainAspectRatio: false,
@@ -226,64 +242,94 @@ export default {
       "PPP",
       "Ummat",
     ],
-    bcPartai: "rgba(255, 255, 0, 0.8)",
-    resultPartaiDprRiTps: [],
-    resultCalegDprRiTps: [],
-    fromTpsDprRi: [],
+    bcPartai: "rgba(0, 128, 0, 0.7)",
+    resultPartaiDprdKotaKec: [],
+    resultCalegDprdKotaKec: [],
+    fromKecDprdKota: [],
   }),
+
+  computed: {
+    ...mapGetters({
+      listKota: "wilayah/kota",
+    }),
+  },
 
   watch: {
     layer() {
-      if (this.layer === "DPR_RI" && this.jenis === "TPS_DPR_RI") {
-        if (this.dapil) {
-          this.tabulasiDprRiTps();
-        }
+      if (this.layer === "DPRD_PROV" && this.jenis === "KECAMATAN_DPRD_KOTA") {
+        this.kabupaten = null;
+        this.dapil = null;
+        this.dataHasilDprdKotaKec = [];
+        this.dataHasilCalegDprdKotaKec = [];
       }
     },
     jenis() {
-      if (this.layer === "DPR_RI" && this.jenis === "TPS_DPR_RI") {
-        if (this.dapil) {
-          this.tabulasiDprRiTps();
-        }
+      if (this.layer === "DPRD_KOTA" && this.jenis === "KECAMATAN_DPRD_KOTA") {
+        this.kabupaten = null;
+        this.dapil = null;
+        this.dataHasilDprdKotaKec = [];
+        this.dataHasilCalegDprdKotaKec = [];
       }
     },
   },
 
   methods: {
     ...mapActions({
+      getDataKota: "wilayah/getKota",
+      getDataDapil: "dapil/getDapilByParam",
       getTabulasi: "tabulasi/getDataTabulasi",
       getSuara: "tabulasi/getHasilTpsPerDapil",
-      getDapil: "dapil/getDapilByParam",
     }),
-    async tabulasiDprRiTps() {
-      this.resultPartaiDprRiTps = [];
-      this.resultCalegDprRiTps = [];
-      this.loading = true;
-      let layer = "DPR RI";
-      let jenis = "tps";
-      let param = {
-        layer: layer,
-        jenis: jenis,
-        dapil: this.dapil,
+    getDapil() {
+      let payload = {
+        layer: "dprdkabkota",
+        param: {
+          wilayah: this.kabupaten,
+        },
       };
-      await this.getTabulasi(param)
-        .then((response) => {
-          this.dataHasilDprRiTps = response.hasilFinal;
-          this.setDataHasilPartai(response.hasilFinal);
-          this.setHasilCaleg(response.hasilFinal);
-        })
-        .catch((e) => {
-          this.textSnackbar = "FETCH DATA DAPIL ERROR";
-          this.colorSnackbar = "error";
-          this.alertSnackbar = true;
-        });
-
-      let uid_dapil = this.listDapilDprRiTps.find(
-        (el) => el.nama === this.dapil
-      ).uid;
-      this.getSuara(uid_dapil).then((response) => {
-        this.fromTpsDprRi = response.data;
+      this.getDataDapil(payload).then((response) => {
+        this.listDapilDprdKotaKec = response.data;
       });
+    },
+    async tabulasiDprdKotaKec() {
+      if (this.dapil) {
+        this.resultPartaiDprdKotaKec = [];
+        this.resultCalegDprdKotaKec = [];
+        this.loading = true;
+        let layer = "DPRD KAB/KOTA";
+        let jenis = "kecamatan";
+        let param = {
+          layer: layer,
+          jenis: jenis,
+          kabupaten: this.kabupaten,
+          dapil: this.dapil,
+        };
+        if (this.kabupaten) {
+          await this.getTabulasi(param)
+            .then((response) => {
+              this.dataHasilDprdKotaKec = response.hasilFinal;
+              this.setDataHasilPartai(response.hasilFinal);
+              this.setHasilCaleg(response.hasilFinal);
+            })
+            .catch((e) => {
+              this.textSnackbar = "FETCH DATA DAPIL ERROR";
+              this.colorSnackbar = "error";
+              this.alertSnackbar = true;
+            });
+          let payload = {
+            dapil: "dprdkabkota",
+            param: {
+              wilayah: this.kabupaten,
+            },
+          };
+          let uid_dapil = this.listDapilDprdKotaKec.find(
+            (el) => el.nama === this.dapil
+          ).uid;
+          this.getSuara(uid_dapil).then((response) => {
+            this.fromKecDprdKota = response.data;
+          });
+        }
+      }
     },
     setDataHasilPartai(data) {
       console.log(data);
@@ -295,6 +341,7 @@ export default {
               {
                 label: "perolehan suara",
                 backgroundColor: this.bcPartai,
+                color: "black",
                 data: [
                   el.suaraPartai.pkb,
                   el.suaraPartai.gerindra,
@@ -325,7 +372,7 @@ export default {
             ],
           },
         };
-        this.resultPartaiDprRiTps.push(rest);
+        this.resultPartaiDprdKotaKec.push(rest);
       });
       this.loading = false;
     },
@@ -349,7 +396,7 @@ export default {
                 data: js,
                 datalabels: {
                   color: "black",
-                  backgroundColor: "whitesmoke",
+                  backgroundColor: "white",
                   align: "end",
                   anchor: "center",
                 },
@@ -357,24 +404,19 @@ export default {
             ],
           },
         };
-        this.resultCalegDprRiTps.push(rest);
+        this.resultCalegDprdKotaKec.push(rest);
       });
       this.loading = false;
     },
   },
 
   mounted() {
-    let payload = {
-      layer: "dprri",
-      param: {},
-    };
-    this.getDapil(payload).then((response) => {
-      this.listDapilDprRiTps = response.data;
-    });
-    if (this.layer === "DPR_RI" && this.jenis === "TPS_DPR_RI") {
-      if (this.dapil) {
-        this.tabulasiDprRiTps();
-      }
+    this.getDataKota();
+    if (this.layer === "DPRD_KOTA" && this.jenis === "KECAMATAN_DPRD_KOTA") {
+      this.kabupaten = null;
+      this.dapil = null;
+      this.dataHasilDprdKotaKec = [];
+      this.dataHasilCalegDprdKotaKec = [];
     }
   },
 };

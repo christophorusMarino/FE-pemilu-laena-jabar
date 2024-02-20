@@ -8,15 +8,15 @@
           label="pilih dapil"
           dense
           outlined
-          :items="listDapilDprRiTps"
+          :items="listDapilDprRiKec"
           item-text="nama"
           item-value="nama"
-          @change="tabulasiDprRiTps"
+          @change="tabulasiDprRiKec"
         ></v-autocomplete>
       </v-col>
       <v-col cols="1">
         <v-card-title class="py-0 justify-center" v-if="dapil">
-          <v-icon x-large @click="() => tabulasiDprRiTps()">
+          <v-icon x-large @click="() => tabulasiDprRiKec()">
             mdi-refresh-circle
           </v-icon>
         </v-card-title>
@@ -24,7 +24,7 @@
       <v-col cols="4"></v-col>
     </v-row>
     <v-row no-gutters v-if="!loading">
-      <v-col cols="12" v-for="(data, idx) in dataHasilDprRiTps" :key="idx">
+      <v-col cols="12" v-for="(data, idx) in dataHasilDprRiKec" :key="idx">
         <v-card class="ma-2">
           <v-row no-gutters>
             <v-col cols="12">
@@ -46,11 +46,11 @@
               <v-card-title
                 class="py-0 justify-center font-weight-bold black--text text-caption"
               >
-                Suara Masuk : {{ fromTpsDprRi.tps_input_suara }} /
-                {{ fromTpsDprRi.jumlah_tps }} TPS (
+                Suara Masuk : {{ fromKecDprRi.tps_input_suara }} /
+                {{ fromKecDprRi.jumlah_tps }} TPS (
                 {{
                   (
-                    (fromTpsDprRi.tps_input_suara / fromTpsDprRi.jumlah_tps) *
+                    (fromKecDprRi.tps_input_suara / fromKecDprRi.jumlah_tps) *
                     100
                   ).toFixed(2)
                 }}% )
@@ -69,7 +69,7 @@
                 <v-card-text class="ma-0 px-2">
                   <Bar
                     :chart-options="chartOptions"
-                    :data="resultPartaiDprRiTps[idx].result"
+                    :data="resultPartaiDprRiKec[idx].result"
                     :chart-id="chartId"
                     :dataset-id-key="datasetIdKey"
                     :width="width"
@@ -86,7 +86,7 @@
                 <v-card-text class="ma-0 px-2">
                   <Bar
                     :chart-options="chartOptions"
-                    :data="resultCalegDprRiTps[idx].result"
+                    :data="resultCalegDprRiKec[idx].result"
                     :chart-id="chartId"
                     :dataset-id-key="datasetIdKey"
                     :width="width"
@@ -104,7 +104,7 @@
                   <v-row no-gutters>
                     <v-col
                       cols="2"
-                      v-for="(val, key, index) in dataHasilDprRiTps[idx].kursi"
+                      v-for="(val, key, index) in dataHasilDprRiKec[idx].kursi"
                       :key="index"
                     >
                       <v-card color="yellow" outlined class="ma-1">
@@ -146,8 +146,8 @@
     </v-snackbar>
   </div>
 </template>
-    
-<script>
+      
+      <script>
 import { mapActions } from "vuex";
 import { Bar } from "vue-chartjs";
 import {
@@ -199,9 +199,9 @@ export default {
     alertSnackbar: false,
     textSnackbar: "",
     colorSnackbar: "",
-    listDapilDprRiTps: [],
-    dataHasilDprRiTps: [],
-    dataHasilCalegDprRiTps: [],
+    listDapilDprRiKec: [],
+    dataHasilDprRiKec: [],
+    dataHasilCalegDprRiKec: [],
     chartOptions: {
       responsive: true,
       maintainAspectRatio: false,
@@ -227,23 +227,27 @@ export default {
       "Ummat",
     ],
     bcPartai: "rgba(255, 255, 0, 0.8)",
-    resultPartaiDprRiTps: [],
-    resultCalegDprRiTps: [],
-    fromTpsDprRi: [],
+    resultPartaiDprRiKec: [],
+    resultCalegDprRiKec: [],
+    fromKecDprRi: [],
   }),
 
   watch: {
     layer() {
-      if (this.layer === "DPR_RI" && this.jenis === "TPS_DPR_RI") {
+      if (this.layer === "DPR_RI" && this.jenis === "KECAMATAN_DPR_RI") {
         if (this.dapil) {
-          this.tabulasiDprRiTps();
+          this.resultPartaiDprRiKec = [];
+          this.resultCalegDprRiKec = [];
+          this.tabulasiDprRiKec();
         }
       }
     },
     jenis() {
-      if (this.layer === "DPR_RI" && this.jenis === "TPS_DPR_RI") {
+      if (this.layer === "DPR_RI" && this.jenis === "KECAMATAN_DPR_RI") {
         if (this.dapil) {
-          this.tabulasiDprRiTps();
+          this.resultPartaiDprRiKec = [];
+          this.resultCalegDprRiKec = [];
+          this.tabulasiDprRiKec();
         }
       }
     },
@@ -255,12 +259,12 @@ export default {
       getSuara: "tabulasi/getHasilTpsPerDapil",
       getDapil: "dapil/getDapilByParam",
     }),
-    async tabulasiDprRiTps() {
-      this.resultPartaiDprRiTps = [];
-      this.resultCalegDprRiTps = [];
+    async tabulasiDprRiKec() {
+      this.resultPartaiDprRiKec = [];
+      this.resultCalegDprRiKec = [];
       this.loading = true;
       let layer = "DPR RI";
-      let jenis = "tps";
+      let jenis = "kecamatan";
       let param = {
         layer: layer,
         jenis: jenis,
@@ -268,7 +272,7 @@ export default {
       };
       await this.getTabulasi(param)
         .then((response) => {
-          this.dataHasilDprRiTps = response.hasilFinal;
+          this.dataHasilDprRiKec = response.hasilFinal;
           this.setDataHasilPartai(response.hasilFinal);
           this.setHasilCaleg(response.hasilFinal);
         })
@@ -278,11 +282,11 @@ export default {
           this.alertSnackbar = true;
         });
 
-      let uid_dapil = this.listDapilDprRiTps.find(
+      let uid_dapil = this.listDapilDprRiKec.find(
         (el) => el.nama === this.dapil
       ).uid;
       this.getSuara(uid_dapil).then((response) => {
-        this.fromTpsDprRi = response.data;
+        this.fromKecDprRi = response.data;
       });
     },
     setDataHasilPartai(data) {
@@ -325,7 +329,7 @@ export default {
             ],
           },
         };
-        this.resultPartaiDprRiTps.push(rest);
+        this.resultPartaiDprRiKec.push(rest);
       });
       this.loading = false;
     },
@@ -357,7 +361,7 @@ export default {
             ],
           },
         };
-        this.resultCalegDprRiTps.push(rest);
+        this.resultCalegDprRiKec.push(rest);
       });
       this.loading = false;
     },
@@ -369,11 +373,11 @@ export default {
       param: {},
     };
     this.getDapil(payload).then((response) => {
-      this.listDapilDprRiTps = response.data;
+      this.listDapilDprRiKec = response.data;
     });
-    if (this.layer === "DPR_RI" && this.jenis === "TPS_DPR_RI") {
+    if (this.layer === "DPR_RI" && this.jenis === "KECAMATAN_DPR_RI") {
       if (this.dapil) {
-        this.tabulasiDprRiTps();
+        this.tabulasiDprRiKec();
       }
     }
   },

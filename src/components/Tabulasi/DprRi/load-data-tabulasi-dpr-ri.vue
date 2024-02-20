@@ -17,7 +17,12 @@
             <v-tab-item value="TPS_DPR_RI">
               <tabulasi-tps-dpr-ri :layer="layer" :jenis="currentTabDprRi" />
             </v-tab-item>
-            <v-tab-item value="KECAMATAN_DPR_RI"> </v-tab-item>
+            <v-tab-item value="KECAMATAN_DPR_RI">
+              <tabulasi-kecamatan-dpr-ri
+                :layer="layer"
+                :jenis="currentTabDprRi"
+              />
+            </v-tab-item>
           </v-tabs-items>
         </v-container>
       </v-sheet>
@@ -26,10 +31,11 @@
 </template>
     
 <script>
+import TabulasiKecamatanDprRi from "./tabulasi-kecamatan-dpr-ri.vue";
 import tabulasiTpsDprRi from "./tabulasi-tps-dpr-ri.vue";
 
 export default {
-  components: { tabulasiTpsDprRi },
+  components: { tabulasiTpsDprRi, TabulasiKecamatanDprRi },
   props: ["layer"],
 
   data: () => ({

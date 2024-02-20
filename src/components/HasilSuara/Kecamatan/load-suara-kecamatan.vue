@@ -43,6 +43,7 @@
                 :hasil-suara="hasilSuara"
                 :kabupaten="namaKabupaten"
                 :kecamatan="namaKecamatan"
+                @reloadHasil="dataHasil"
               />
             </v-tab-item>
             <v-tab-item value="DPRD_KOTA"></v-tab-item>
