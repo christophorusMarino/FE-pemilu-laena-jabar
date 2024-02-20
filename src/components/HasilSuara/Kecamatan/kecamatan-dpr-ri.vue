@@ -180,8 +180,8 @@
     </v-card>
 
     <v-snackbar v-model="alertSnackbar" timeout="2000" :color="colorSnackbar">
-      <strong>{{ textSnackbar }}</strong> </v-snackbar
-    >F
+      <strong>{{ textSnackbar }}</strong>
+    </v-snackbar>
   </div>
 </template>
   
@@ -303,6 +303,27 @@ export default {
           );
         });
       }
+      this.post(dataSend);
+    },
+    async post(data) {
+      await this.postDataDprRi(data)
+        .then((response) => {
+          this.textSnackbar = response.message;
+          this.colorSnackbar = "success";
+          this.alertSnackbar = true;
+          this.$emit("reloadHasil");
+        })
+        .catch((e) => {
+          this.textSnackbar = e.response.data.message;
+          this.colorSnackbar = "error";
+          this.alertSnackbar = true;
+        })
+        .finally(() => {
+          this.btnLoading = false;
+          this.fotoDprdProv = [];
+          this.tempDprdProv = [];
+        });
+      this.getDapil();
     },
     chooseImageDprRi() {
       if (this.tempDprRi?.length) {
