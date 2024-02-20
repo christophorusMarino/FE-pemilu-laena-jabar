@@ -46,7 +46,15 @@
                 @reloadHasil="dataHasil"
               />
             </v-tab-item>
-            <v-tab-item value="DPRD_KOTA"></v-tab-item>
+            <v-tab-item value="DPRD_KOTA">
+              <kecamatan-dprd-kota
+                :kec="kec"
+                :hasil-suara="hasilSuara"
+                :kabupaten="namaKabupaten"
+                :kecamatan="namaKecamatan"
+                @reloadHasil="dataHasil"
+              />
+            </v-tab-item>
           </v-tabs-items>
         </v-tabs>
       </v-card-text>
@@ -57,8 +65,9 @@
     <script>
 import { mapActions, mapGetters } from "vuex";
 import kecamatanDprRi from "./kecamatan-dpr-ri.vue";
+import KecamatanDprdKota from "./kecamatan-dprd-kota.vue";
 export default {
-  components: { kecamatanDprRi },
+  components: { kecamatanDprRi, KecamatanDprdKota },
   computed: {
     ...mapGetters({
       dataKota: "wilayah/kota",
