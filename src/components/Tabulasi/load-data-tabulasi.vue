@@ -2,8 +2,22 @@
   <div>
     <v-card flat>
       <v-tabs grow v-model="currentTab">
-        <v-tab href="#DPR_RI"> TANIA LAENA PUTRI, B.Sc </v-tab>
-        <v-tab href="#DPRD_KOTA"> ASTRID LAENA PUTRI, S.H., M.H </v-tab>
+        <v-tab
+          href="#DPR_RI"
+          v-if="
+            user.kode_wilayah === '3276' ||
+            user.kode_wilayah === '3275' ||
+            user.kode_wilayah === null
+          "
+        >
+          TANIA LAENA PUTRI, B.Sc
+        </v-tab>
+        <v-tab
+          href="#DPRD_KOTA"
+          v-if="user.kode_wilayah === '3275' || user.kode_wilayah === null"
+        >
+          ASTRID LAENA PUTRI, S.H., M.H
+        </v-tab>
 
         <v-tabs-items v-model="currentTab">
           <v-tab-item value="DPR_RI">
@@ -29,6 +43,7 @@ export default {
   },
   data: () => ({
     currentTab: "DPR_RI",
+    user: JSON.parse(localStorage.getItem("xrfgthj")),
   }),
 };
 </script>

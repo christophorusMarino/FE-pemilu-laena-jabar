@@ -4,6 +4,18 @@
       <v-col cols="4"></v-col>
       <v-col cols="3">
         <v-autocomplete
+          v-if="user.uid_wilayah"
+          label="pilih kota/kabupaten"
+          outlined
+          dense
+          hide-details
+          :items="dataKota"
+          item-text="nama"
+          item-value="uid"
+          @change="tabulasiDprRiTpsKec"
+        ></v-autocomplete>
+        <v-autocomplete
+          v-else
           v-model="dapil"
           label="pilih dapil"
           dense
@@ -20,114 +32,188 @@
             mdi-refresh-circle
           </v-icon>
         </v-card-title>
+        <v-card-title class="py-0 justify-center" v-if="dataKota.length > 0">
+          <v-icon x-large @click="() => tabulasiDprRiTpsKec()">
+            mdi-refresh-circle
+          </v-icon>
+        </v-card-title>
       </v-col>
       <v-col cols="4"></v-col>
     </v-row>
     <v-row no-gutters v-if="!loading">
-      <v-col cols="12" v-for="(data, idx) in dataHasilDprRiTps" :key="idx">
-        <v-card class="ma-2">
-          <v-row no-gutters>
-            <v-col cols="12">
-              <v-card-title
-                class="pt-1 py-0 justify-center font-weight-bold black--text text-subtitle-1"
-              >
-                HASIL PERHITUNGAN SUARA
-              </v-card-title>
-              <v-card-title
-                class="py-0 justify-center font-weight-bold black--text text-subtitle-1"
-              >
-                - {{ data.jenis }} / {{ data.nama }} -
-              </v-card-title>
-              <v-card-title
-                class="py-0 justify-center font-weight-bold black--text text-caption"
-              >
-                Jumlah Kursi : {{ data.jumlah_kursi }}
-              </v-card-title>
-              <v-card-title
-                class="py-0 justify-center font-weight-bold black--text text-caption"
-              >
-                Suara Masuk : {{ fromTpsDprRi.tps_input_suara }} /
-                {{ fromTpsDprRi.jumlah_tps }} TPS (
-                {{
-                  (
-                    (fromTpsDprRi.tps_input_suara / fromTpsDprRi.jumlah_tps) *
-                    100
-                  ).toFixed(2)
-                }}% )
-              </v-card-title>
-            </v-col>
-          </v-row>
-          <v-divider class="my-1"></v-divider>
-          <v-card-text class="px-0 mx-0">
+      <template v-if="user.uid_wilayah">
+        <v-col cols="12" v-if="dataHasilDprRiTps.CountSuara">
+          <v-card class="ma-2">
             <v-row no-gutters>
-              <v-col cols="6">
-                <v-card-title
-                  class="py-0 justify-center font-weight-bold black--text text-subtitle-2"
-                >
-                  - PEROLEHAN SUARA PARTAI -
-                </v-card-title>
-                <v-card-text class="ma-0 px-2">
-                  <Bar
-                    :chart-options="chartOptions"
-                    :data="resultPartaiDprRiTps[idx].result"
-                    :chart-id="chartId"
-                    :dataset-id-key="datasetIdKey"
-                    :width="width"
-                    :height="height"
-                  />
-                </v-card-text>
-              </v-col>
-              <v-col cols="6">
-                <v-card-title
-                  class="py-0 justify-center font-weight-bold black--text text-subtitle-2"
-                >
-                  - PEROLEHAN SUARA CALEG -
-                </v-card-title>
-                <v-card-text class="ma-0 px-2">
-                  <Bar
-                    :chart-options="chartOptions"
-                    :data="resultCalegDprRiTps[idx].result"
-                    :chart-id="chartId"
-                    :dataset-id-key="datasetIdKey"
-                    :width="width"
-                    :height="height"
-                  />
-                </v-card-text>
-              </v-col>
               <v-col cols="12">
                 <v-card-title
-                  class="py-0 justify-center font-weight-bold black--text text-subtitle-2"
+                  class="pt-1 py-0 justify-center font-weight-bold black--text text-subtitle-1"
                 >
-                  - PEROLEHAN KURSI PARPOL -
+                  HASIL PERHITUNGAN SUARA
                 </v-card-title>
-                <v-card-text class="ma-0 px-2">
-                  <v-row no-gutters>
-                    <v-col
-                      cols="2"
-                      v-for="(val, key, index) in dataHasilDprRiTps[idx].kursi"
-                      :key="index"
-                    >
-                      <v-card color="yellow" outlined class="ma-1">
-                        <v-card-title
-                          class="justify-center black--text font-weight-bold black--text text-subtitle-2"
-                        >
-                          {{ key.toUpperCase() }}
-                        </v-card-title>
-                        <v-divider></v-divider>
-                        <v-card-title
-                          class="justify-center black--text font-weight-bold black--text text-caption"
-                        >
-                          Kursi: {{ val }}
-                        </v-card-title>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </v-card-text>
+                <v-card-title
+                  class="py-0 justify-center font-weight-bold black--text text-caption"
+                >
+                  Suara Masuk : {{ fromTpsDprRi.tps_input_suara }} /
+                  {{ fromTpsDprRi.jumlah_tps }} TPS (
+                  {{
+                    (
+                      (fromTpsDprRi.tps_input_suara / fromTpsDprRi.jumlah_tps) *
+                      100
+                    ).toFixed(2)
+                  }}% )
+                </v-card-title>
               </v-col>
             </v-row>
-          </v-card-text>
-        </v-card>
-      </v-col>
+            <v-divider class="my-1"></v-divider>
+            <v-card-text class="px-0 mx-0">
+              <v-row no-gutters>
+                <v-col cols="6">
+                  <v-card-title
+                    class="py-0 justify-center font-weight-bold black--text text-subtitle-2"
+                  >
+                    - PEROLEHAN SUARA PARTAI -
+                  </v-card-title>
+                  <v-card-text class="ma-0 px-2">
+                    <Bar
+                      :chart-options="chartOptions"
+                      :data="resultPartaiDprRiTps[0].result"
+                      :chart-id="chartId"
+                      :dataset-id-key="datasetIdKey"
+                      :width="width"
+                      :height="height"
+                    />
+                  </v-card-text>
+                </v-col>
+                <v-col cols="6">
+                  <v-card-title
+                    class="py-0 justify-center font-weight-bold black--text text-subtitle-2"
+                  >
+                    - PEROLEHAN SUARA CALEG -
+                  </v-card-title>
+                  <v-card-text class="ma-0 px-2">
+                    <Bar
+                      :chart-options="chartOptions"
+                      :data="resultCalegDprRiTps[0].result"
+                      :chart-id="chartId"
+                      :dataset-id-key="datasetIdKey"
+                      :width="width"
+                      :height="height"
+                    />
+                  </v-card-text>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </template>
+      <template v-else>
+        <v-col cols="12" v-for="(data, idx) in dataHasilDprRiTps" :key="idx">
+          <v-card class="ma-2">
+            <v-row no-gutters>
+              <v-col cols="12">
+                <v-card-title
+                  class="pt-1 py-0 justify-center font-weight-bold black--text text-subtitle-1"
+                >
+                  HASIL PERHITUNGAN SUARA
+                </v-card-title>
+                <v-card-title
+                  class="py-0 justify-center font-weight-bold black--text text-subtitle-1"
+                >
+                  - {{ data.jenis }} / {{ data.nama }} -
+                </v-card-title>
+                <v-card-title
+                  class="py-0 justify-center font-weight-bold black--text text-caption"
+                >
+                  Jumlah Kursi : {{ data.jumlah_kursi }}
+                </v-card-title>
+                <v-card-title
+                  class="py-0 justify-center font-weight-bold black--text text-caption"
+                >
+                  Suara Masuk : {{ fromTpsDprRi.tps_input_suara }} /
+                  {{ fromTpsDprRi.jumlah_tps }} TPS (
+                  {{
+                    (
+                      (fromTpsDprRi.tps_input_suara / fromTpsDprRi.jumlah_tps) *
+                      100
+                    ).toFixed(2)
+                  }}% )
+                </v-card-title>
+              </v-col>
+            </v-row>
+            <v-divider class="my-1"></v-divider>
+            <v-card-text class="px-0 mx-0">
+              <v-row no-gutters>
+                <v-col cols="6">
+                  <v-card-title
+                    class="py-0 justify-center font-weight-bold black--text text-subtitle-2"
+                  >
+                    - PEROLEHAN SUARA PARTAI -
+                  </v-card-title>
+                  <v-card-text class="ma-0 px-2">
+                    <Bar
+                      :chart-options="chartOptions"
+                      :data="resultPartaiDprRiTps[idx].result"
+                      :chart-id="chartId"
+                      :dataset-id-key="datasetIdKey"
+                      :width="width"
+                      :height="height"
+                    />
+                  </v-card-text>
+                </v-col>
+                <v-col cols="6">
+                  <v-card-title
+                    class="py-0 justify-center font-weight-bold black--text text-subtitle-2"
+                  >
+                    - PEROLEHAN SUARA CALEG -
+                  </v-card-title>
+                  <v-card-text class="ma-0 px-2">
+                    <Bar
+                      :chart-options="chartOptions"
+                      :data="resultCalegDprRiTps[idx].result"
+                      :chart-id="chartId"
+                      :dataset-id-key="datasetIdKey"
+                      :width="width"
+                      :height="height"
+                    />
+                  </v-card-text>
+                </v-col>
+                <v-col cols="12" v-if="!user.uid_wilayah">
+                  <v-card-title
+                    class="py-0 justify-center font-weight-bold black--text text-subtitle-2"
+                  >
+                    - PEROLEHAN KURSI PARPOL -
+                  </v-card-title>
+                  <v-card-text class="ma-0 px-2">
+                    <v-row no-gutters>
+                      <v-col
+                        cols="2"
+                        v-for="(val, key, index) in dataHasilDprRiTps[idx]
+                          .kursi"
+                        :key="index"
+                      >
+                        <v-card color="yellow" outlined class="ma-1">
+                          <v-card-title
+                            class="justify-center black--text font-weight-bold black--text text-subtitle-2"
+                          >
+                            {{ key.toUpperCase() }}
+                          </v-card-title>
+                          <v-divider></v-divider>
+                          <v-card-title
+                            class="justify-center black--text font-weight-bold black--text text-caption"
+                          >
+                            Kursi: {{ val }}
+                          </v-card-title>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </template>
     </v-row>
     <v-row no-gutters v-else>
       <v-col cols="6">
@@ -148,7 +234,7 @@
 </template>
     
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import { Bar } from "vue-chartjs";
 import {
   Chart as ChartJS,
@@ -230,6 +316,7 @@ export default {
     resultPartaiDprRiTps: [],
     resultCalegDprRiTps: [],
     fromTpsDprRi: [],
+    user: JSON.parse(localStorage.getItem("xrfgthj")),
   }),
 
   watch: {
@@ -249,12 +336,48 @@ export default {
     },
   },
 
+  computed: {
+    ...mapGetters({
+      dataKota: "wilayah/kota",
+    }),
+  },
+
   methods: {
     ...mapActions({
+      getDataKota: "wilayah/getKota",
       getTabulasi: "tabulasi/getDataTabulasi",
       getSuara: "tabulasi/getHasilTpsPerDapil",
       getDapil: "dapil/getDapilByParam",
+      getTabulasiByKec: "tabulasi/getHasilByKec",
+      getSuaraKec: "tabulasi/getHasilTpsPerWilayah",
     }),
+    async tabulasiDprRiTpsKec() {
+      this.resultPartaiDprRiTps = [];
+      this.resultCalegDprRiTps = [];
+      this.loading = true;
+      let layer = "DPR RI";
+      let jenis = "tps";
+      let qq = {
+        layer: layer,
+        jenis: jenis,
+        uid_wilayah: this.user.uid_wilayah,
+      };
+      await this.getTabulasiByKec(qq)
+        .then((response) => {
+          this.dataHasilDprRiTps = response;
+          this.setDataHasilPartaiKec(response.CountSuara);
+          this.setHasilCalegKec(response.CalegPan);
+        })
+        .catch((e) => {
+          this.textSnackbar = "FETCH DATA DAPIL ERROR";
+          this.colorSnackbar = "error";
+          this.alertSnackbar = true;
+        });
+
+      this.getSuaraKec(this.user.uid_wilayah).then((response) => {
+        this.fromTpsDprRi = response.data;
+      });
+    },
     async tabulasiDprRiTps() {
       this.resultPartaiDprRiTps = [];
       this.resultCalegDprRiTps = [];
@@ -285,8 +408,8 @@ export default {
         this.fromTpsDprRi = response.data;
       });
     },
+
     setDataHasilPartai(data) {
-      console.log(data);
       data.forEach((el) => {
         let rest = {
           result: {
@@ -326,9 +449,73 @@ export default {
           },
         };
         this.resultPartaiDprRiTps.push(rest);
+        console.log(rest);
       });
       this.loading = false;
     },
+    setDataHasilPartaiKec(data) {
+      let js = [];
+      data.forEach((el) => {
+        console.log(el.nama);
+        el.nama === "pkb"
+          ? js.push(el.TotalSuara)
+          : el.nama === "gerindra"
+          ? js.push(el.TotalSuara)
+          : el.nama === "PDIP"
+          ? js.push(el.TotalSuara)
+          : el.nama === "golkar"
+          ? js.push(el.TotalSuara)
+          : el.nama === "nasdem"
+          ? js.push(el.TotalSuara)
+          : el.nama === "PBuruh"
+          ? js.push(el.TotalSuara)
+          : el.nama === "gelora"
+          ? js.push(el.TotalSuara)
+          : el.nama === "pks"
+          ? js.push(el.TotalSuara)
+          : el.nama === "pkn"
+          ? js.push(el.TotalSuara)
+          : el.nama === "hanura"
+          ? js.push(el.TotalSuara)
+          : el.nama === "garuda"
+          ? js.push(el.TotalSuara)
+          : el.nama === "pan"
+          ? js.push(el.TotalSuara)
+          : el.nama === "pbb"
+          ? js.push(el.TotalSuara)
+          : el.nama === "demokrat"
+          ? js.push(el.TotalSuara)
+          : el.nama === "psi"
+          ? js.push(el.TotalSuara)
+          : el.nama === "perindo"
+          ? js.push(el.TotalSuara)
+          : el.nama === "ppp"
+          ? js.push(el.TotalSuara)
+          : el.nama === "ummat"
+          ? js.push(el.TotalSuara)
+          : js.push(0);
+      });
+      let rest = {
+        result: {
+          labels: this.partai,
+          datasets: [
+            {
+              label: "perolehan suara",
+              backgroundColor: this.bcPartai,
+              data: js,
+              datalabels: {
+                color: "black",
+                backgroundColor: "white",
+                align: "end",
+                anchor: "center",
+              },
+            },
+          ],
+        },
+      };
+      this.resultPartaiDprRiTps.push(rest);
+    },
+
     setHasilCaleg(data) {
       data.forEach((el) => {
         let label = [];
@@ -361,9 +548,45 @@ export default {
       });
       this.loading = false;
     },
+    setHasilCalegKec(data) {
+      let label = [];
+      let js = [];
+      data.forEach((el) => {
+        label.push(el.nama);
+        js.push(el.jumlah_suara);
+      });
+      let rest = {
+        result: {
+          labels: label,
+          datasets: [
+            {
+              label: "perolehan suara",
+              backgroundColor: this.bcPartai,
+              data: js,
+              datalabels: {
+                color: "black",
+                backgroundColor: "whitesmoke",
+                align: "end",
+                anchor: "center",
+              },
+            },
+          ],
+        },
+      };
+      this.resultCalegDprRiTps.push(rest);
+      this.loading = false;
+    },
   },
 
   mounted() {
+    if (this.user.uid_wilayah !== null) {
+      let query = {};
+      query = {
+        id: this.user.uid_wilayah,
+      };
+      this.getDataKota(query);
+    }
+
     let payload = {
       layer: "dprri",
       param: {},
