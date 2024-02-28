@@ -455,44 +455,43 @@ export default {
     },
     setDataHasilPartaiKec(data) {
       let js = [];
-      data.forEach((el) => {
-        console.log(el.nama);
+      data.forEach((el, idx) => {
         el.nama === "pkb"
-          ? js.push(el.TotalSuara)
+          ? js[0] = data[idx].TotalSuara
           : el.nama === "gerindra"
-          ? js.push(el.TotalSuara)
+          ? js[1] = data[idx].TotalSuara
           : el.nama === "PDIP"
-          ? js.push(el.TotalSuara)
+          ? js[2] = data[idx].TotalSuara
           : el.nama === "golkar"
-          ? js.push(el.TotalSuara)
+          ? js[3] = data[idx].TotalSuara
           : el.nama === "nasdem"
-          ? js.push(el.TotalSuara)
+          ? js[4] = data[idx].TotalSuara
           : el.nama === "PBuruh"
-          ? js.push(el.TotalSuara)
+          ? js[5] = data[idx].TotalSuara
           : el.nama === "gelora"
-          ? js.push(el.TotalSuara)
+          ? js[6] = data[idx].TotalSuara
           : el.nama === "pks"
-          ? js.push(el.TotalSuara)
+          ? js[7] = data[idx].TotalSuara
           : el.nama === "pkn"
-          ? js.push(el.TotalSuara)
+          ? js[8] = data[idx].TotalSuara
           : el.nama === "hanura"
-          ? js.push(el.TotalSuara)
+          ? js[9] = data[idx].TotalSuara
           : el.nama === "garuda"
-          ? js.push(el.TotalSuara)
+          ? js[10] = data[idx].TotalSuara
           : el.nama === "pan"
-          ? js.push(el.TotalSuara)
+          ? js[11] = data[idx].TotalSuara
           : el.nama === "pbb"
-          ? js.push(el.TotalSuara)
+          ? js[12] = data[idx].TotalSuara
           : el.nama === "demokrat"
-          ? js.push(el.TotalSuara)
+          ? js[13] = data[idx].TotalSuara
           : el.nama === "psi"
-          ? js.push(el.TotalSuara)
+          ? js[14] = data[idx].TotalSuara
           : el.nama === "perindo"
-          ? js.push(el.TotalSuara)
+          ? js[15] = data[idx].TotalSuara
           : el.nama === "ppp"
-          ? js.push(el.TotalSuara)
+          ? js[16] = data[idx].TotalSuara
           : el.nama === "ummat"
-          ? js.push(el.TotalSuara)
+          ? js[17] = data[idx].TotalSuara
           : js.push(0);
       });
       let rest = {
